@@ -102,17 +102,46 @@ function createSoccerViz() {
 		/**
 		 * We will add a new image over each of the elements in the circles
          * By appending the <images> tag to the circle
+         * But we will turn this off so that we can do svg balls
 		 */
-        d3
-            .selectAll('g.overallG')
-            .insert('image', 'text')
-            .attr('xlink:href', function (d) {
-                return flags[d.team];
-            })
-            .attr('width', '30px')
-            .attr('height', '20px')
-            .attr('x', '-15')
-            .attr('y', '-10');
+        // d3
+        //     .selectAll('g.overallG')
+        //     .insert('image', 'text')
+        //     .attr('xlink:href', function (d) {
+        //         return flags[d.team];
+        //     })
+        //     .attr('width', '30px')
+        //     .attr('height', '20px')
+        //     .attr('x', '-15')
+        //     .attr('y', '-10');
+
+        /**
+         * Apparantly we will be stealing images by the looks of it from chapter 2
+         * So we will be using the image from creative common license from the noun project
+         */
+        d3.html("resources/noun_1907_cc.svg", loadSVG);
+
+        /**
+         * This will actually empty the path of the SVG, so we are left with the puresest of forms
+         * from the original, however I am lost at how I can scale these vectors down honestly
+         * @param {*} svgData 
+         */
+        function loadSVG(svgData) {
+            // d3.select(svgData).selectAll("path").each(function() {
+            //     d3.select("svg").node().appendChild(this);
+            // })
+            // d3.selectAll("path").attr("transform", "translate(50,50)");
+            d3.selectAll("g").each(function() {
+                var gParent = this;
+                d3.select(svgData).selectAll("path").each(function() {
+                      gParent.appendChild(this.cloneNode(true))
+                  });
+            });
+            d3.selectAll("path").style("fill", "darkred")
+                .style("stroke", "black").style("stroke-width", "1px");
+            
+        };
+
 
 
         /**
@@ -296,7 +325,7 @@ function createSoccerViz() {
 			/**
 			 * We are now going to use color brewer's library to encode the color below
 			 */
-            var colorQuantize = d3.scaleQuantize().domain([0, maxValue]).range(colorbrewer.Reds[5]);
+            var colorQuantize = d3.scaleQuantize().domain([0, maxValue]).range(colorbrewer.Greens[5]);
             d3
                 .selectAll('g.overallG')
                 .select('circle')
